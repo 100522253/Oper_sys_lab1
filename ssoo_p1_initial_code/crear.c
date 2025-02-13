@@ -26,13 +26,17 @@ mode_t get_mode(char *arg_mode){
 int main(int argc, char *argv[]) {
     if (argc != EXPECTED_ARGC) {
 		// Check if the number of arguments is incorrect
-        printf("Error: Invalid number of arguments.\n");
+        perror("Error: Invalid number of arguments.\n");
 		printf("Program executing with %d arguments, the program must tun with %d arguments.\n", argc - 1, EXPECTED_ARGC - 1);
         return -1;
     }
     char *filename = argv[1];
     mode_t mode = get_mode(argv[2]); // Convertir de string a octal
-    if (mode == -1) return -1;
+
+    if (mode == -1) {
+        printf("the argument: %s, is not an octal number with just 3 digits", argv[2]);
+        return -1;
+    }    
     
     // Guardar la máscara actual y establecerla a 0
     mode_t old_umask = umask(0);
@@ -40,11 +44,14 @@ int main(int argc, char *argv[]) {
     // Intentar crear el archivo con el modo especificado
     int fd = open(filename, O_CREAT | O_EXCL, mode);
     if (fd == -1) {
-        fprintf(stderr, "Error creating file %s: %s\n", filename, strerror(errno));
+        fprintf(stderr, "Error creating file %s: %s\n", filename, strerror(errno));//chatgptazo, ns si está bien
         umask(old_umask); // Restaurar la máscara previa
         return -1;
     }
-    close(fd);
+    if (close(fd)<0){
+        perror("close error");
+        exit(1);
+    }
     
     // Restaurar la máscara previa
     umask(old_umask);
