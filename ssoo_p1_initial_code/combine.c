@@ -66,13 +66,21 @@ int main(int argc, char *argv[]){
 	if (argc != EXPECTED_ARGC) {
 		// Check if the number of arguments is incorrect
         perror("Error: Invalid number of arguments.\n");
+<<<<<<< HEAD
 		printf("Program running with %d arguments, the program must tun with %d arguments.\n", argc - 1, EXPECTED_ARGC - 1);
+=======
+		perror("Program running with %d arguments, the program must tun with %d arguments.\n", argc - 1, EXPECTED_ARGC - 1);
+>>>>>>> refs/remotes/origin/main
         return -1;
     }
     
     struct alumno students[MAX_STUDENTS];
 	int num_students = 0;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> refs/remotes/origin/main
 	read_file(argv[1],&students,num_students);
 	read_file(argv[2],&students,num_students);
 	if (num_students < MAX_STUDENTS){
