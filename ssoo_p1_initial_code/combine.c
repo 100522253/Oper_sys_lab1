@@ -1,10 +1,10 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
+#include <stdio.h>    // i/o lib
+#include <unistd.h>   // linux lib
+#include <stdlib.h>   // dynamic mem lib
+#include <sys/types.h>// ??
+#include <sys/stat.h> // ??
+#include <fcntl.h>    // ??
+#include <string.h>   // string lib
 
 #define EXPECTED_ARGC 4
 

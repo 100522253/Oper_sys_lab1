@@ -12,14 +12,14 @@ mode_t get_mode(char *arg_mode){
     /*Gets the octal mode from the string*/
     //me quiero morir
     // Cheack if length =3 or =4 with a 0 at the begining
-    if (strlen(arg_mode) != 3 || (strlen(arg_mode) != 4 && arg_mode[0] == '0')) return -1;
+    size_t len = strlen(arg_mode);
+    if (!(len == 3 || (len == 4 && arg_mode[0] == '0'))) return -1;
 
-    for (size_t i = 0; i < strlen(arg_mode); i++) // Check if the octal code has correct characters
+    for (size_t i = (len == 4 ? 1 : 0); i < len; i++) // Check if the octal code has correct characters
     {
-        if (!(arg_mode[i] >= '0' && arg_mode[i] <= '7')) return -1;
+        if (arg_mode[i] < '0' || arg_mode[i] > '7') return -1;
     }
-    mode_t mode = strtol(arg_mode, NULL, 8); //change from string to base 8
-    return mode;
+    return strtol(arg_mode, NULL, 8); //change from string to base 8
 }
 
 
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     }
     char *filename = argv[1];
     mode_t mode = get_mode(argv[2]); // Convertir de string a octal
-    if (mode != -1) return -1;
+    if (mode == -1) return -1;
     
     // Guardar la máscara actual y establecerla a 0
     mode_t old_umask = umask(0);
