@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     mode_t mode = get_mode(argv[2]); // Convertir de string a octal
 
     if (mode == -1) {
-        printf("the argument: %s, is not an octal number with just 3 digits", argv[2]);
+        printf("the argument: %s, is not an octal number with just 3 digits\n", argv[2]);
         return -1;
     }    
     
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     if (close(fd)<0){
-        perror("close error");
+        perror("close error\n");
         exit(1);
     }
     
