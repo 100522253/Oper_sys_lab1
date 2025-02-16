@@ -51,7 +51,7 @@ void bubble_sort(struct alumno students[], int n) {
     }
 }
 
-void make_csv(const char csv_file[], struct alumno students[], int num_students){
+void make_csv(const char csv_file_name[], struct alumno students[], int num_students){
 	/*
 	Creates a CSV file and populates it with the values requested by the statement
 	*/
@@ -82,16 +82,31 @@ void make_csv(const char csv_file[], struct alumno students[], int num_students)
 			exit(1);
 		}
 	}
-	// Create the csv
-	// Check if open/creat correctly
-
-	for (size_t i = 0; i < 5; i++){
-		// The string is in te style, e.g: M;54;23.50%""
-		// write ("%c;%d;%.2f%%\n", char_mark[i], marks_count[i], (marks_count[i] * 100.0) / total); 
+	int csv = open(csv_file_name, O_CREAT | O_TRUNC | O_WRONLY);
+	if (csv == -1){
+		printf("Error creating file %s \n", csv_file_name);
+		exit(1);
 	}
 
-	// Close csv
-	// Check if closes correctly
+	// Populates the .csv
+	for (size_t i = 0; i < 5; i++){
+		// The string is in the style, e.g: M;54;23.50%""
+		char line_buffer[40]; // 40*8 bytes should be mem. enough to store a line, however as the size is not exact idk if it could make segmentation errors or fit in the file
+		// Format the line of the .csv
+		snprintf(line_buffer, sizeof(line_buffer), "%c;%d;%.2f%%\n", char_mark[i], marks_count[i], (marks_count[i] * 100.0) / num_students);
+
+		if (write(csv, &line_buffer, sizeof(line_buffer))) {
+            printf("Error writing file %s \n", csv_file_name); // Check errors
+            close(csv); // Close the .csv file
+            exit (1);
+        } 
+	}
+
+	// Closes the file
+	if (close(csv) < 0){ 
+		printf("Error closing file %s\n", csv_file_name);
+		exit(1);
+	}
 
 }
 
@@ -128,16 +143,24 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
 }
 
 void write_students(const char *arg_file, struct alumno *students, int num_students){
-	// Faltan tal vez flags aqui
-	int file = open(arg_file, O_WRONLY); // Open the file
+	/*
+	Write the whole array of students in the output file
+	*/
+	int file = open(arg_file, O_WRONLY | O_CREAT | O_TRUNC); // Open the file
     if (file == -1) {
         printf("Error reading the file %s\n", arg_file);
         exit(1);
     }
     
-    // Write marks
+    for (int i = 0; i < num_students; i++){ // Write each student in output file
+        if (write(file, &students[i], sizeof(struct alumno)) == -1) {
+            printf("Error writing file %s \n", arg_file); // Check errors
+            close(file); // Close the file
+            exit (1);
+        }
+    }
     
-    if (close(file)<0){
+    if (close(file) < 0){ // Close the file, if error exit
 		printf("close error\n");
 		exit(1);
 	}
