@@ -23,9 +23,9 @@ int check_duplicated_alumno(struct alumno students[], int n){
 	/*
 	Checks if in an struct array there is a duplicate O(N²)
 	*/
-	for (size_t i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)
 	{
-		for (size_t j = i + 1; j < n; j++)
+		for (int j = i + 1; j < n; j++)
 		{
 			if (eq_alumno(students[i], students[j])) return 1;
 		}
@@ -58,7 +58,7 @@ void make_csv(const char csv_file_name[], struct alumno students[], int num_stud
 	int marks_count[5] = {0}; // Initialize all the counts in 0
 	char char_mark[5] = {'M', 'S', 'N', 'A', 'F'};
 	/*Indeces of marks_count: 0 -> M, 1 -> S, 2 -> N, 3 -> A, 4 -> F*/
-	for (size_t i = 0; i < num_students; i++) // Counts every type of mark
+	for (int i = 0; i < num_students; i++) // Counts every type of mark
 	{
 		switch (students[i].nota){
 		case 10:
@@ -82,20 +82,21 @@ void make_csv(const char csv_file_name[], struct alumno students[], int num_stud
 			exit(1);
 		}
 	}
-	int csv = open(csv_file_name, O_CREAT | O_TRUNC | O_WRONLY);
+	int csv = open(csv_file_name, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (csv == -1){
 		printf("Error creating file %s \n", csv_file_name);
 		exit(1);
 	}
 
 	// Populates the .csv
-	for (size_t i = 0; i < 5; i++){
+	for (int i = 0; i < 5; i++){
 		// The string is in the style, e.g: M;54;23.50%""
 		char line_buffer[40]; // 40*8 bytes should be mem. enough to store a line, however as the size is not exact idk if it could make segmentation errors or fit in the file
 		// Format the line of the .csv
 		snprintf(line_buffer, sizeof(line_buffer), "%c;%d;%.2f%%\n", char_mark[i], marks_count[i], (marks_count[i] * 100.0) / num_students);
 
-		if (write(csv, &line_buffer, sizeof(line_buffer))) {
+		size_t line_written = write(csv, line_buffer, strlen(line_buffer));
+		if (line_written == (size_t)-1) {
             printf("Error writing file %s \n", csv_file_name); // Check errors
             close(csv); // Close the .csv file
             exit (1);
@@ -129,7 +130,8 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
 		if (student_data == 0) {
 			break; // End of file reached
 		}
-		if (student_data < sizeof(struct alumno)) {  // Partial read (shouldn't happen normally)
+		printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
+		if (student_data < (ssize_t)sizeof(struct alumno)) {  // Partial read (shouldn't happen normally)
             printf("Warning: Partial struct read. Data might be corrupted.\n");
             break;
         }
@@ -146,7 +148,7 @@ void write_students(const char *arg_file, struct alumno *students, int num_stude
 	/*
 	Write the whole array of students in the output file
 	*/
-	int file = open(arg_file, O_WRONLY | O_CREAT | O_TRUNC); // Open the file
+	int file = open(arg_file, O_RDWR | O_CREAT | O_TRUNC, 0644); // Open the file
     if (file == -1) {
         printf("Error reading the file %s\n", arg_file);
         exit(1);
@@ -167,6 +169,7 @@ void write_students(const char *arg_file, struct alumno *students, int num_stude
 }
 
 int main(int argc, char *argv[]){
+
 	if (argc != EXPECTED_ARGC) {
 		// Check if the number of arguments is incorrect
 		printf("Error: Invalid number of arguments.\n");
@@ -179,18 +182,25 @@ int main(int argc, char *argv[]){
 
 	read_file(argv[1],students,&num_students);
 	read_file(argv[2],students,&num_students);
-	if (num_students < MAX_STUDENTS){ 
+	if (num_students > MAX_STUDENTS){ 
 		// If any of the while loops of above is closed 
 		// by reaching the students number limit an error is raised
 		printf("Maximun number of students reached\n");
 		return -1;
 	}
 	if (check_duplicated_alumno(students, num_students)){
+		// Maybe the duplicated student should be deleted instead of exiting the program???
 		printf("There are duplicated students\n");
 		return -1;
 	}
 
     bubble_sort(students, num_students); // Sort the students in ascending order
+	
+	printf("-----\n");
+	for (int i = 0; i < num_students; i++)
+	{
+		printf("%d. %s, %d, %d\n", i, students[i].nombre, students[i].nota, students[i].convocatoria);
+	}
 	write_students(argv[3], students, num_students); // Writes the sorted students into the 3rd file
 
 	make_csv("estadisticas.csv", students, num_students); // Creates the CSV and populates it with the statistics

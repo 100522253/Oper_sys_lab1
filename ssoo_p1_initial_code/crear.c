@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     char *filename = argv[1];
     mode_t mode = get_mode(argv[2]); // Convertir de string a octal
 
-    if (mode == -1) {
+    if (mode == (mode_t)-1) {
         printf("the argument: %s, is not an octal number with just 3 digits\n", argv[2]);
         return -1;
     }    
