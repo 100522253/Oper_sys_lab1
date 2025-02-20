@@ -133,9 +133,6 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
 			printf("Error reading file\n");
 			exit(1);
 		}
-		if (student_data == 0) {
-			break; // End of file reached
-		}
 		//debug: printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
 		if (student_data < (ssize_t)sizeof(struct alumno)) {  // Partial read (shouldn't happen normally)
             printf("Warning: Partial struct read. Data might be corrupted.\n");
