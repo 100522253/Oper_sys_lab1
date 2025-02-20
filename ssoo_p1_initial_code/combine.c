@@ -16,7 +16,8 @@ struct alumno{
 };
 
 int eq_alumno(struct alumno s1, struct alumno s2){
-	return (strcmp(s1.nombre, s2.nombre) == 0 && s1.nota == s2. nota && s1.convocatoria == s2.convocatoria);
+	/*Check if two students has the same name*/
+	return strcmp(s1.nombre, s2.nombre) == 0;
 }
 
 int check_duplicated_alumno(struct alumno students[], int n){
@@ -35,14 +36,14 @@ int check_duplicated_alumno(struct alumno students[], int n){
 }
 
 void bubble_sort(struct alumno students[], int n) {
-	/* 
-	Bubble sort in ascending order to sort students O(N²)
-	*/
+    /* 
+    Bubble sort in ascending order to sort students O(N²)
+    */
     for (int i = 0; i < n-1; i++) {
         for (int j = 0; j < n-i-1; j++) {
-            if (students[j].nota > students[j+1].nota) {
-                // Exchange the left value if it is lower than
-				// the actual, to get an ascending order
+
+            if (students[j].nota > students[j+1].nota){ // else if the convocatorias 
+                // Changes the values in the array
                 struct alumno temp = students[j];
                 students[j] = students[j+1];
                 students[j+1] = temp;
@@ -50,6 +51,7 @@ void bubble_sort(struct alumno students[], int n) {
         }
     }
 }
+
 
 void make_csv(const char csv_file_name[], struct alumno students[], int num_students){
 	/*
