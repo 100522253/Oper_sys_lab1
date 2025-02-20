@@ -16,7 +16,9 @@ struct alumno{
 };
 
 int eq_alumno(struct alumno s1, struct alumno s2){
-	/*Check if two students has the same name*/
+	/*
+	Check if two students has the same name
+	*/
 	return strcmp(s1.nombre, s2.nombre) == 0;
 }
 
@@ -132,7 +134,7 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
 		if (student_data == 0) {
 			break; // End of file reached
 		}
-		printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
+		//debug: printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
 		if (student_data < (ssize_t)sizeof(struct alumno)) {  // Partial read (shouldn't happen normally)
             printf("Warning: Partial struct read. Data might be corrupted.\n");
             break;
@@ -198,11 +200,15 @@ int main(int argc, char *argv[]){
 
     bubble_sort(students, num_students); // Sort the students in ascending order
 	
+	/*
 	printf("-----\n");
 	for (int i = 0; i < num_students; i++)
 	{
 		printf("%d. %s, %d, %d\n", i, students[i].nombre, students[i].nota, students[i].convocatoria);
 	}
+	*/
+
+
 	write_students(argv[3], students, num_students); // Writes the sorted students into the 3rd file
 
 	make_csv("estadisticas.csv", students, num_students); // Creates the CSV and populates it with the statistics
