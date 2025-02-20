@@ -125,7 +125,9 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
         exit(1);
     }
     
-    while (*num_students < MAX_STUDENTS) { // To check whether the number of students reach it's maximun
+	ssize_t student_data = 1;
+	int data_corrupted = 0;
+    while ((*num_students < MAX_STUDENTS) && (student_data != 0) && data_corrupted==0) { // To check whether the number of students reach it's maximun
 		ssize_t student_data = read(file, &students[*num_students], sizeof(struct alumno));
 		if (student_data == -1) { // Problem reading the data
 			printf("Error reading file\n");
@@ -137,7 +139,7 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
 		//debug: printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
 		if (student_data < (ssize_t)sizeof(struct alumno)) {  // Partial read (shouldn't happen normally)
             printf("Warning: Partial struct read. Data might be corrupted.\n");
-            break;
+            data_corrupted = 1;
         }
         (*num_students)++;
     }
