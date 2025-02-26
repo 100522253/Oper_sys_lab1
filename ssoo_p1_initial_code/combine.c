@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
     bubble_sort(students, num_students); // Sort the students in ascending order
 	
 	/*
-	printf("-----\n");
+	printf("-Debugging-\n");
 	for (int i = 0; i < num_students; i++)
 	{
 		printf("%d. %s, %d, %d\n", i, students[i].nombre, students[i].nota, students[i].convocatoria);

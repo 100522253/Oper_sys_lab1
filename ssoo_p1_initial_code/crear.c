@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     // Intentar crear el archivo con el modo especificado
     int fd = open(filename, O_CREAT | O_EXCL | O_TRUNC, mode);// Hay q comprobar si estas son las flags correctas
     if (fd == -1) {
-        fprintf(stderr, "Error creating file %s: %s\n", filename, strerror(errno));//chatgptazo, ns si está bien
+        printf("Error creating file %s: %s\n", filename);//chatgptazo, ns si está bien
         umask(old_umask); // Restaurar la máscara previa
         return -1;
     }
