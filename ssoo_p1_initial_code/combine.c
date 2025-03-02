@@ -24,7 +24,7 @@ int eq_alumno(struct alumno s1, struct alumno s2){
 
 int check_duplicated_alumno(struct alumno students[], int n){
 	/*
-	Checks if in an struct array there is a duplicate O(N²)
+	Checks if in an struct array there is a duplicate
 	*/
 	for (int i = 0; i < n; i++)
 	{
@@ -39,7 +39,7 @@ int check_duplicated_alumno(struct alumno students[], int n){
 
 void bubble_sort(struct alumno students[], int n) {
     /* 
-    Bubble sort in ascending order to sort students O(N²)
+    Bubble sort in ascending order to sort students
     */
     for (int i = 0; i < n-1; i++) {
         for (int j = 0; j < n-i-1; j++) {
@@ -125,18 +125,19 @@ void read_file(const char arg_file[], struct alumno students[], int *num_student
         exit(1);
     }
     
-	ssize_t student_data = 1;
-	int data_corrupted = 0;
-    while ((*num_students < MAX_STUDENTS) && (student_data != 0) && data_corrupted==0) { // To check whether the number of students reach it's maximun
+    while (*num_students < MAX_STUDENTS) { // To check whether the number of students reach it's maximun
 		ssize_t student_data = read(file, &students[*num_students], sizeof(struct alumno));
 		if (student_data == -1) { // Problem reading the data
 			printf("Error reading file\n");
 			exit(1);
 		}
-		//debug: printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
+		if (student_data == 0) {
+			break; // End of file reached
+		}
+		printf("%d. %s, %d, %d\n", *num_students, students[*num_students].nombre, students[*num_students].nota, students[*num_students].convocatoria);
 		if (student_data < (ssize_t)sizeof(struct alumno)) {  // Partial read (shouldn't happen normally)
             printf("Warning: Partial struct read. Data might be corrupted.\n");
-            data_corrupted = 1;
+            break;
         }
         (*num_students)++;
     }
@@ -151,7 +152,7 @@ void write_students(const char *arg_file, struct alumno *students, int num_stude
 	/*
 	Write the whole array of students in the output file
 	*/
-	int file = open(arg_file, O_RDWR | O_CREAT | O_TRUNC, 0644); // Open the file
+	int file = open(arg_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // Open the file
     if (file == -1) {
         printf("Error reading the file %s\n", arg_file);
         exit(1);
@@ -183,29 +184,28 @@ int main(int argc, char *argv[]){
     struct alumno students[MAX_STUDENTS];
 	int num_students = 0;
 
-	read_file(argv[1],students,&num_students);
-	read_file(argv[2],students,&num_students);
-	if (num_students > MAX_STUDENTS){ 
+	read_file(argv[1], students, 	&num_students);
+	read_file(argv[2], students, &num_students);
+	if (num_students >= MAX_STUDENTS){ 
 		// If any of the while loops of above is closed 
 		// by reaching the students number limit an error is raised
 		printf("Maximun number of students reached\n");
 		return -1;
 	}
 	if (check_duplicated_alumno(students, num_students)){
-		// Maybe the duplicated student should be deleted instead of exiting the program???
 		printf("There are duplicated students\n");
 		return -1;
 	}
 
     bubble_sort(students, num_students); // Sort the students in ascending order
 	
-	/*
+	///*
 	printf("-Debugging-\n");
 	for (int i = 0; i < num_students; i++)
 	{
 		printf("%d. %s, %d, %d\n", i, students[i].nombre, students[i].nota, students[i].convocatoria);
 	}
-	*/
+	//*/
 
 
 	write_students(argv[3], students, num_students); // Writes the sorted students into the 3rd file
